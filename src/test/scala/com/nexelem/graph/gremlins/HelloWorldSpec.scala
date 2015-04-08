@@ -1,19 +1,27 @@
 package com.nexelem.graph.gremlins
 
-import org.specs2.Specification
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+import org.scalatest.{FlatSpec, Matchers}
 
-class HelloWorldSpec extends Specification {
-  def is = s2"""
+import scala.collection.mutable.Stack
 
-  This is a specification for the 'Hello world' string
+@RunWith(classOf[JUnitRunner])
+class HelloWorldSpec extends FlatSpec with Matchers {
 
-  The 'Hello world' string should
-    contain 11 characters                             $e1
-    start with 'Hello'                                $e2
-    end with 'world'                                  $e3
-                                                      """
-  def e1 = "Hello world" must haveSize(11)
-  def e2 = "Hello world" must startWith("Hello")
-  def e3 = "Hello world" must endWith("world")
+  "A Stack" should "pop values in last-in-first-out order" in {
+    val stack = new Stack[Int]
+    stack.push(1)
+    stack.push(2)
+    stack.pop() should be (2)
+    stack.pop() should be (1)
+  }
+
+  it should "throw NoSuchElementException if an empty stack is popped" in {
+    val emptyStack = new Stack[Int]
+    a [NoSuchElementException] should be thrownBy {
+      emptyStack.pop()
+    }
+  }
 
 }
