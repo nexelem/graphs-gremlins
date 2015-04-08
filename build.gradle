@@ -1,0 +1,31 @@
+apply plugin: "scala"
+
+group = "com.nexelem"
+version = "1.0"
+        
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://repo.typesafe.com/typesafe/releases"
+    }
+    maven {
+        url "http://dl.bintray.com/scalaz/releases"
+    }
+}
+    
+dependencies {
+    compile('org.scala-lang:scala-compiler:2.11.6')
+    compile('org.scala-lang:scala-library:2.11.6')
+    compile('com.jsuereth:scala-arm_2.11:1.4')
+
+    testCompile('org.specs2:specs2-core_2.11:3.4')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.4-20150407220034+0000"
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
+}

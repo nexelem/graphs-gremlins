@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Graphs &amp; Gremlins</title>
+
+		<meta name="description" content="Graph databases / scala 101">
+		<meta name="author" content="pdolega">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Graphs &amp; Gremlins</h1>
+					<br/><br/>
+					<h3>from Scala</h3>
+					<p>
+						<small>Created by <a href="http://www.nexelem.com">Pawel Dolega</a> / <a href="http://twitter.com/pdolega">@pdolega</a></small>
+					</p>
+				</section>
+				
+				<section>
+					<h2>What are lambdas ? (Scala)</h1>
+					<pre><code data-trim contenteditable>
+(x: Int, y: Int) => "(" + x + ", " + y + ")"
+					</pre></code>
+					<pre><code data-trim contenteditable>
+val numbers = List(5, 4, 8, 6, 2)
+numbers.fold(0) { (acc, next) =>
+  acc + next
+}
+					</pre></code>
+					or in short:
+					<pre><code data-trim contenteditable>
+List(5, 4, 8, 6, 2).fold(0) { (acc, next) => acc + next }
+					</pre></code>
+				</section>
+				
+				<section>
+					<h2>What are lambdas ? (Haskell)</h1>
+					<pre><code data-trim contenteditable>
+zipWith (\a b -> (a * 30 + 3) / b) [5,4,3,2,1] [1,2,3,4,5]    
+					</pre></code>
+					<pre><code data-trim contenteditable>
+map (\(a,b) -> a + b) [(1,2),(3,5),(6,3),(2,6),(2,5)]
+					</pre></code>
+					<pre><code data-trim contenteditable>					
+sum' xs = foldl (\acc x -> acc + x) 0 xs
+					</pre></code>
+					<aside class="notes">
+						[153.0,61.5,31.0,15.75,6.6]
+						[3,8,9,8,7]
+					</aside>
+				</section>
+
+				<section>
+					<h3>So what do lambdas give us ?</h2>
+					<ol>
+						<li>syntactic sugar</li>
+						<li>conciseness</li>
+						<li>improved readability *</li>
+					</ol>				
+					
+					<br/><br/>
+					<span class="fragment">
+						* But if you overuse them it may not be the case for people who never saw lambda before
+					</span>
+					<br/>
+					<span class="fragment">
+						** But anyways are easy to get grasp on and generally natural for newbies - Python and Ruby are proofs
+					</span>
+				</section>
+				
+				<section>
+					<h3>Want to argue ?</h2>
+<pre class="fragment"><code data-trim contenteditable>
+List&lt;Modification&gt; mods = payload.getVehicle().getModifications();
+List&lt;String&gt; ids = Collections2.transform(
+  mods,
+  new Function&lt;Vehicle.VehicleModification, String&gt;() {
+    @Override
+    public String apply(final Vehicle.VehicleModification mod) {
+      return mod.getTypeId();
+    }
+  }
+);
+Quotedetails.Extra extras = new Quotedetails.Extra();
+</pre></code>
+<span class="fragment">
+vs
+</span>
+<pre class="fragment"><code data-trim contenteditable>
+List&lt;Modification&gt; mods = payload.getVehicle().getModifications();
+List&lt;String&gt; ids = mods.streams().map((mod) -> mod.getTypeId()).toList();
+Quotedetails.Extra extras = new Quotedetails.Extra();
+</pre></code>
+
+<span class="fragment">
+* @miszczunio
+</span>
+				</section>
+				
+				<section>
+					<h3>Anonymous classes not anymore</h2>
+					<ol>
+						<li>Event handlers</li>
+						<li>Threads / Runnables (if you use them)</li>
+						<li>Strategy pattern</li>
+					</ol>
+					
+					<br/><br/>
+					<span class="fragment">
+					  Basically anything that is a class encapsulating pure activity
+					</span>
+				</section>
+				
+				<section>
+					<h3>More ?</h2>
+					<ol>
+						<li>correctness</li>
+						<li>componentisation / reuse</li>
+						<li>parallel execution optimizations</li>
+					</ol>				
+				</section>
+				
+				<section>
+				  <h1>Let's start</h1>
+				</section>
+				
+				<section>
+					<h3>Java syntax</h2>
+					<p>
+					<pre><code data-trim contenteditable>
+(Type1 param1, Type2 param2...) -> { &lt;logic&gt; }
+(Type1 param1, Type2 param2...) -> &lt;returned_value&gt;
+					</pre></code>
+						Sometimes even:
+					<pre><code data-trim contenteditable>
+(param1, param2...) -> { &lt;logic&gt; } *
+(param1, param2...) -> &lt;returned value&gt;
+param1 -> &lt;returned value&gt;
+					</pre></code>
+		
+					<p style="font-size: 0.8em;">
+					Depending on whether there is 1 or multiple params or whether there is logic or simple result returned
+					</p>
+		
+					<span class="fragment" style="font-size: 0.5em;">
+					  * Mental note: target typing
+					</span>
+					
+					</p>
+				</section>
+				
+				<section>
+					<h2>Lambdas are objects too</h2>
+					<p>
+					  <pre><code>
+Comparator&lt;Apple&gt; c = (a1, a2) -&gt; a1.getWeight().compareTo(a2.getWeight());
+					  </code></pre>
+					</p>
+				</section>
+				
+				<section>
+					<h3>Functional interfaces</h3>
+					
+					Basically interface with single abstract method
+					<br/>
+					@FunctionalInterface
+					
+					<pre class="fragment"><code>
+public interface Adder {
+  int add(int a, int b);
+}
+					</pre></code>				
+				</section>
+				
+				<section>
+				  <h3>Which one is functional interface ?</h3>
+				  <pre><code>
+public interface Multiplier {
+  int add(int a, int b);
+}
+public interface ExtendedMultiplier extends Multiplier {
+  int add(double a, double b);
+}
+public interface Nothing {
+}				  
+				  </code></pre>
+				</section>
+				
+				<section>
+					<h3>Built-in interfaces</h3>
+					
+					<ul>
+					  <li>Consumer</li>
+					  <li>Predicate</li>
+					  <li>Supplier</li>
+					  <li>Function</li>
+					  <li>more...</li>
+					</ul>
+					<br/><br/>
+					<span class="fragment">
+					  Long story short: look into package <a href="http://docs.oracle.com/javase/8/docs/api/java/util/function/package-frame.html" target="_blank">java.util.function</a>
+					</span>
+				</section>
+
+				<section>
+					<h3>Method references</h2>
+					<p>
+					<pre><code data-trim contenteditable>
+File[] hiddenFiles = new File(".").listFiles(new FileFilter() {
+  public boolean accept(File file) {
+    return file.isHidden();
+  }
+});
+					</pre></code>					
+					<span class="fragment">
+					=
+					</span>
+					<pre class="fragment"><code data-trim contenteditable>
+File[] hiddenFiles = new File(".").listFiles(File::isHidden); *
+					</pre></code>
+					
+					<br/>
+					<span class="fragment">
+					  * mental note - parameter binding
+					</span>
+					</p>					
+				</section>
+				
+				<section>
+					<h3>Method references - syntax</h2>
+					<p>
+					<pre><code data-trim contenteditable>
+Class::method // 2 contexts possible here - 1, 2, 3 below
+object::method // point 4 next slide
+					</pre></code>					
+					<span class="fragment">
+					Examples with types:
+					</span>
+					<pre class="fragment"><code data-trim contenteditable>
+1. Collection::size //		(Collection c) -&gt; c.size()
+
+2. Thred::currentThread //		() -&gt; Thread.currentThread()
+
+3. String::charAt //		(String str, int pos) -&gt; str.charAt(pos)
+
+4. System.out::println //		(String s) -&gt; System.out::println
+					</pre></code>
+					</p>
+				</section>
+
+				<section>
+					<h2>Neat syntax for</h2>
+					<p>
+					    <pre><code>
+listOfStrings.sort(comparing(String::length));
+					  </code></pre>
+					</p>
+				</section>
+				
+				<section>
+				  <h2>Constructor references</h2>
+				  
+				  <pre><code>
+Class::new;
+				  </pre></code>
+				  
+				  e.g.
+				  
+				  <pre><code>
+Supplier&lt;Connection> creator = () -> new Connection()
+				  </pre></code>
+				  =
+				  <pre><code>
+Supplier&lt;Connection> creator = Connection::new
+				  </pre></code>				
+				</section>
+				
+				<section>
+				  <h2>Method reference parameter passing</h2>
+				  
+				  <pre><code>
+Function&ltString, Connection> creator = Connection::new
+				  </code></pre>
+				
+				  <p>
+				    The question is - would it compile ?
+				  </p>
+				  
+				  <p class="fragment">
+				    Well, that depends
+				  </p>
+				
+				</section>
+				
+				<section>
+				  <h2>Method reference parameter passing - explanation</h2>
+				  
+				  Static method:
+				  <pre><code>
+FunctionN&lt;Type1,Type2, Type3,... RetType&gt; lambda = Class::method
+
+interface FunctionN {
+
+  RetType apply(Type1, Type2, Type3...);
+
+}
+				  </code></pre>
+				
+				</section>
+				
+				<section>
+				  <h2>Method reference parameter passing - explanation</h2>
+				  
+				  Instance method:
+				  <pre><code>
+FunctionN&lt;Type1,Type2, Type3,... RetType&gt; lambda = Class::method
+
+interface FunctionN {
+
+  RetType apply(Type1, Type2, Type3...);
+
+}
+				  </code></pre>
+				  
+				  <p>
+				    First parameter is the instance (or invocation context if you prefer)
+				  </p>
+				
+				</section>
+				
+				<section>
+				  <h2>Method reference parameter passing - again</h2>
+				  
+				  <pre><code>
+Function&lt;String, Connection&gt; creator = Connection::new
+				  </code></pre>
+				
+				  <p class="fragment">
+				    Only if there is a version of Connection's constructor takin 1 parameter of type String
+				  </p>
+				
+				</section>
+				
+				<section>
+					<h4>Task - sort collection of transactions by descreasing value and then alphabetically by customer</h4>
+										
+					<pre><code>
+@Data // Lombok
+class Transaction {
+  private double value;
+  private String customer;
+}
+					</code></pre>
+					
+					<p>
+					Cheatsheet:
+					<pre>
+@Getter / @Setter
+Never write public int getFoo() {return foo;} again.
+
+@Data
+All together now: A shortcut for @ToString, @EqualsAndHashCode, 
+@Getter on all fields, and @Setter on all non-final fields,
+and @RequiredArgsConstructor!
+					</pre>
+					</p>
+				</section>
+				
+				<section>
+					<h2>Think in classic Java</h2>					
+					<pre class="fragment"><code>
+Collections.sort(transactions, new Comparator() {
+        public int compare(Transaction t1, Transaction t2) {
+            double v1 = t1.getValue();
+            double v2 = t2.getValue();
+            int vComp = v1.compareTo(v2);
+
+            if (vComp != 0) {
+               return vComp;
+            } else {
+               String c1 = t1.getCustomer();
+               String c2 = t2.getCustomer();
+               return c1.compareTo(c2);
+            }
+});
+					</pre></code>
+				</section>
+				
+				<section>
+				  <section>
+					  <h2>Lambda solution</h2>
+					  <p class="fragment">
+					  Let's start with length
+					  <pre class="fragment"><code>
+transactions.sort(comparing(Transaction::getValue));
+					  </code></pre>
+					  </p>
+					  
+					  <p class="fragment">
+					  Now let's reverse order:
+					  <pre class="fragment"><code>
+transactions.sort(comparing(Transaction::getValue)
+  .reversed()
+);
+					  </code></pre>
+					  </p>
+					  
+					  <p class="fragment">
+					  Now let's add secondary ordering alphabetical order
+					  <pre class="fragment"><code>
+transactions.sort(comparing(Transaction::getValue)
+  .reversed()
+  .thenComparing(Transaction::getCustomer)
+);
+					  </code></pre>
+					  </p>
+				</section>
+
+				  <section>
+						  <h2>BTW there was an error</h2>
+
+						  <pre class="fragment"><code>
+Collections.sort(transactions, new Comparator() {
+        public int compare(Transaction t1, Transaction t2) {
+            double v1 = t1.getValue();
+            double v2 = t2.getValue();
+            int vComp = v1.compareTo(v2);	// wrong order of comparison
+
+            if (vComp != 0) {
+               return vComp;
+            } else {
+               String c1 = t1.getCustomer();
+               String c2 = t2.getCustomer();
+               return c2.compareTo(c1);		// wrong order				 of comparison
+            }
+});
+						  </code></pre>
+				  </section>
+				</section>
+				
+				<section>
+					<h2>void compatibility rule</h2>
+					<p>
+					<pre><code>
+// Predicate has a boolean return
+Predicate&lt;String&gt; p = s -&gt; list.add(s);
+// Consumer has a void return
+Consumer&lt;String&gt; b = s -&gt; list.add(s);
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h1>THE END</h1>
+					<h3>by Pawel Dolega</h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
