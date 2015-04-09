@@ -46,451 +46,227 @@
 				<section>
 					<h1>Graphs &amp; Gremlins</h1>
 					<br/><br/>
-					<h3>from Scala</h3>
+					<h3>from Scala code</h3>
 					<p>
 						<small>Created by <a href="http://www.nexelem.com">Pawel Dolega</a> / <a href="http://twitter.com/pdolega">@pdolega</a></small>
 					</p>
 				</section>
-				
+
+				<section data-background="img/title.png" data-background-size="36em">
+
+				</section>
+
 				<section>
-					<h2>What are lambdas ? (Scala)</h1>
-					<pre><code data-trim contenteditable>
-(x: Int, y: Int) => "(" + x + ", " + y + ")"
-					</pre></code>
-					<pre><code data-trim contenteditable>
-val numbers = List(5, 4, 8, 6, 2)
-numbers.fold(0) { (acc, next) =>
-  acc + next
-}
-					</pre></code>
-					or in short:
-					<pre><code data-trim contenteditable>
-List(5, 4, 8, 6, 2).fold(0) { (acc, next) => acc + next }
-					</pre></code>
+					<h2>What kind of graph are we talking about ?</h2>
+
+					<p>
+					A graph is a data structure composed of <b>vertices</b> (nodes, dots) and <b>edges</b> (arcs, lines).
+					When modeling a graph in a computer and applying it to modern data sets and practices, the generic mathematically-oriented, binary graph is extended to support both <b>labels</b> and <b>key/value properties</b>.
+					This structure is known as a <b>property graph</b>. More formally, it is a directed, binary, attributed multi-graph.
+					</p>
+				</section>
+
+				<section>
+					<h2>What is graph database model composed of?</h2>
+					<ul>
+						<li>Vertecies</li>
+						<li>Edges</li>
+						<li>Properties</li>
+					</ul>
 				</section>
 				
 				<section>
-					<h2>What are lambdas ? (Haskell)</h1>
-					<pre><code data-trim contenteditable>
-zipWith (\a b -> (a * 30 + 3) / b) [5,4,3,2,1] [1,2,3,4,5]    
-					</pre></code>
-					<pre><code data-trim contenteditable>
-map (\(a,b) -> a + b) [(1,2),(3,5),(6,3),(2,6),(2,5)]
-					</pre></code>
-					<pre><code data-trim contenteditable>					
-sum' xs = foldl (\acc x -> acc + x) 0 xs
-					</pre></code>
+					<h2>Vertex</h2>
+
+					Vertex corresponds to relation in relational model. <br/>
+					It's primary container for keeping information chunks.<br/>
+
+					In short: Entity
+
 					<aside class="notes">
-						[153.0,61.5,31.0,15.75,6.6]
-						[3,8,9,8,7]
 					</aside>
 				</section>
 
 				<section>
-					<h3>So what do lambdas give us ?</h2>
-					<ol>
-						<li>syntactic sugar</li>
-						<li>conciseness</li>
-						<li>improved readability *</li>
-					</ol>				
-					
-					<br/><br/>
-					<span class="fragment">
-						* But if you overuse them it may not be the case for people who never saw lambda before
-					</span>
-					<br/>
-					<span class="fragment">
-						** But anyways are easy to get grasp on and generally natural for newbies - Python and Ruby are proofs
-					</span>
-				</section>
-				
-				<section>
-					<h3>Want to argue ?</h2>
-<pre class="fragment"><code data-trim contenteditable>
-List&lt;Modification&gt; mods = payload.getVehicle().getModifications();
-List&lt;String&gt; ids = Collections2.transform(
-  mods,
-  new Function&lt;Vehicle.VehicleModification, String&gt;() {
-    @Override
-    public String apply(final Vehicle.VehicleModification mod) {
-      return mod.getTypeId();
-    }
-  }
-);
-Quotedetails.Extra extras = new Quotedetails.Extra();
-</pre></code>
-<span class="fragment">
-vs
-</span>
-<pre class="fragment"><code data-trim contenteditable>
-List&lt;Modification&gt; mods = payload.getVehicle().getModifications();
-List&lt;String&gt; ids = mods.streams().map((mod) -> mod.getTypeId()).toList();
-Quotedetails.Extra extras = new Quotedetails.Extra();
-</pre></code>
+					<h2>Edge</h2>
 
-<span class="fragment">
-* @miszczunio
-</span>
+					Edge forms <b>direct</b> relationship between vertices. It's basically the <i>thing</i> that allows all the magic to happen.<br/>
+					It has direction and can have properties.
+
+					Edge is always seen from one vertex as outgoing (tail) whilst on the other vertex as incoming (head).
+
+					In short: Relationship
+
+					<aside class="notes">
+						In fact edge may be stored in the database in the same way as vertices. It depends on the implementation and whether you use
+						so called <i>lightweight edge</i> (a.k.a. link) or edge with properties.
+					</aside>
 				</section>
-				
+
 				<section>
-					<h3>Anonymous classes not anymore</h2>
-					<ol>
-						<li>Event handlers</li>
-						<li>Threads / Runnables (if you use them)</li>
-						<li>Strategy pattern</li>
-					</ol>
+					<h2>Property</h2>
+
+					Single piece of data.<br/>
+
+					Property can be a part of both vertex or edge.<br/>
+
+					In short: Attribute
+
+					<aside class="notes">
+						In fact edge may be stored in the database in the same way as vertices. It depends on the implementation and whether you use
+						so called <i>lightweight edge</i> or edge with properties.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Structure of a vertex</h2>
+					<pre><code>
+						{
+						  ...
+						  "_class_": "com.nexelem.nutstrap.play.model.ReductionMethod",
+						  "name": "Bateria cyklonów,elektrofiltr 99%",
+						  "enabled": false,
+						  "cost": 1.65,
+						  "description": "Bateria cyklonów,elektrofiltr 99%",
+						  "out_toxinsEdge": [
+						    "#9:580",
+						    "#9:581",
+						  ],
+						  "out_emitterSubtypeEdge": [
+						    "#9:92"
+						  ]
+						},
+					</code></pre>
 					
 					<br/><br/>
-					<span class="fragment">
-					  Basically anything that is a class encapsulating pure activity
+					<span>
+						Structure of vertex containing properties, edges and database specific parameters.
 					</span>
-				</section>
-				
-				<section>
-					<h3>More ?</h2>
-					<ol>
-						<li>correctness</li>
-						<li>componentisation / reuse</li>
-						<li>parallel execution optimizations</li>
-					</ol>				
-				</section>
-				
-				<section>
-				  <h1>Let's start</h1>
-				</section>
-				
-				<section>
-					<h3>Java syntax</h2>
-					<p>
-					<pre><code data-trim contenteditable>
-(Type1 param1, Type2 param2...) -> { &lt;logic&gt; }
-(Type1 param1, Type2 param2...) -> &lt;returned_value&gt;
-					</pre></code>
-						Sometimes even:
-					<pre><code data-trim contenteditable>
-(param1, param2...) -> { &lt;logic&gt; } *
-(param1, param2...) -> &lt;returned value&gt;
-param1 -> &lt;returned value&gt;
-					</pre></code>
-		
-					<p style="font-size: 0.8em;">
-					Depending on whether there is 1 or multiple params or whether there is logic or simple result returned
-					</p>
-		
-					<span class="fragment" style="font-size: 0.5em;">
-					  * Mental note: target typing
-					</span>
-					
-					</p>
-				</section>
-				
-				<section>
-					<h2>Lambdas are objects too</h2>
-					<p>
-					  <pre><code>
-Comparator&lt;Apple&gt; c = (a1, a2) -&gt; a1.getWeight().compareTo(a2.getWeight());
-					  </code></pre>
-					</p>
-				</section>
-				
-				<section>
-					<h3>Functional interfaces</h3>
-					
-					Basically interface with single abstract method
 					<br/>
-					@FunctionalInterface
-					
-					<pre class="fragment"><code>
-public interface Adder {
-  int add(int a, int b);
-}
-					</pre></code>				
 				</section>
 				
 				<section>
-				  <h3>Which one is functional interface ?</h3>
-				  <pre><code>
-public interface Multiplier {
-  int add(int a, int b);
-}
-public interface ExtendedMultiplier extends Multiplier {
-  int add(double a, double b);
-}
-public interface Nothing {
-}				  
-				  </code></pre>
-				</section>
-				
-				<section>
-					<h3>Built-in interfaces</h3>
-					
+					<h2>How to you interact with graph database ?</h2>
+
 					<ul>
-					  <li>Consumer</li>
-					  <li>Predicate</li>
-					  <li>Supplier</li>
-					  <li>Function</li>
-					  <li>more...</li>
+						<li>Custom API (e.g. Cypher)</li>
+						<li>Tinkerpop</li>
 					</ul>
-					<br/><br/>
-					<span class="fragment">
-					  Long story short: look into package <a href="http://docs.oracle.com/javase/8/docs/api/java/util/function/package-frame.html" target="_blank">java.util.function</a>
-					</span>
+				</section>
+
+				<section data-background="img/tinkerpop-splash.png" data-background-size="16em">
+					<h2>Here comes Tinkerpop</h2>
 				</section>
 
 				<section>
-					<h3>Method references</h2>
-					<p>
-					<pre><code data-trim contenteditable>
-File[] hiddenFiles = new File(".").listFiles(new FileFilter() {
-  public boolean accept(File file) {
-    return file.isHidden();
-  }
-});
-					</pre></code>					
-					<span class="fragment">
-					=
-					</span>
-					<pre class="fragment"><code data-trim contenteditable>
-File[] hiddenFiles = new File(".").listFiles(File::isHidden); *
-					</pre></code>
-					
-					<br/>
-					<span class="fragment">
-					  * mental note - parameter binding
-					</span>
-					</p>					
+					<h2>What's included ?</h2>
+
+					<ul>
+						<li><b>Blueprints</b> - collection of interfaces / implementations for the property graph data model. In short: JDBC, but for graph databases.</li><br/>
+						<li><b>Pipes</b> - lazy, data flow framework</li>
+						<li><b>Gremlin</b> - graph traversal language</li>
+						<li>Frames - object-to-graph mapper</li>
+						<li>Furnace - graph algorithms package</li>
+						<li><b>Rexster - graph server</b></li>
+					</ul>
+
+					<aside class="notes">
+						Examples of Furnace algorithms
+					</aside>
 				</section>
-				
-				<section>
-					<h3>Method references - syntax</h2>
-					<p>
-					<pre><code data-trim contenteditable>
-Class::method // 2 contexts possible here - 1, 2, 3 below
-object::method // point 4 next slide
-					</pre></code>					
-					<span class="fragment">
-					Examples with types:
-					</span>
-					<pre class="fragment"><code data-trim contenteditable>
-1. Collection::size //		(Collection c) -&gt; c.size()
 
-2. Thred::currentThread //		() -&gt; Thread.currentThread()
+				<section data-background="img/rexster-system-arch.png" data-background-size="16em">
 
-3. String::charAt //		(String str, int pos) -&gt; str.charAt(pos)
 
-4. System.out::println //		(String s) -&gt; System.out::println
-					</pre></code>
-					</p>
 				</section>
 
 				<section>
-					<h2>Neat syntax for</h2>
-					<p>
-					    <pre><code>
-listOfStrings.sort(comparing(String::length));
-					  </code></pre>
-					</p>
+					<h2>More....</h2>
+					<ul>
+						<li>Schema-full vs schema-less vs schema-mixed models</li>
+						<li>Clustering</li>
+						<li>Extended SQL syntax</li>
+						<li></li>
+						<li></li>
+					</ul>
 				</section>
-				
+
 				<section>
-				  <h2>Constructor references</h2>
-				  
-				  <pre><code>
-Class::new;
-				  </pre></code>
-				  
-				  e.g.
-				  
-				  <pre><code>
-Supplier&lt;Connection> creator = () -> new Connection()
-				  </pre></code>
-				  =
-				  <pre><code>
-Supplier&lt;Connection> creator = Connection::new
-				  </pre></code>				
+					<h1>Questions</h1>
 				</section>
-				
+
 				<section>
-				  <h2>Method reference parameter passing</h2>
-				  
-				  <pre><code>
-Function&ltString, Connection> creator = Connection::new
-				  </code></pre>
-				
-				  <p>
-				    The question is - would it compile ?
-				  </p>
-				  
-				  <p class="fragment">
-				    Well, that depends
-				  </p>
-				
+					<h1>Thank you</h1>
 				</section>
-				
+
 				<section>
-				  <h2>Method reference parameter passing - explanation</h2>
-				  
-				  Static method:
-				  <pre><code>
-FunctionN&lt;Type1,Type2, Type3,... RetType&gt; lambda = Class::method
-
-interface FunctionN {
-
-  RetType apply(Type1, Type2, Type3...);
-
-}
-				  </code></pre>
-				
+					<h2>Bonus</h2>
 				</section>
-				
+
 				<section>
-				  <h2>Method reference parameter passing - explanation</h2>
-				  
-				  Instance method:
-				  <pre><code>
-FunctionN&lt;Type1,Type2, Type3,... RetType&gt; lambda = Class::method
-
-interface FunctionN {
-
-  RetType apply(Type1, Type2, Type3...);
-
-}
-				  </code></pre>
-				  
-				  <p>
-				    First parameter is the instance (or invocation context if you prefer)
-				  </p>
-				
+					<h2>Frames</h2>
+					<b>Expresses graph elements in terms of particular Java interefaces</b>
 				</section>
-				
+
 				<section>
-				  <h2>Method reference parameter passing - again</h2>
-				  
-				  <pre><code>
-Function&lt;String, Connection&gt; creator = Connection::new
-				  </code></pre>
-				
-				  <p class="fragment">
-				    Only if there is a version of Connection's constructor takin 1 parameter of type String
-				  </p>
-				
-				</section>
-				
-				<section>
-					<h4>Task - sort collection of transactions by descreasing value and then alphabetically by customer</h4>
-										
+					<h2>Frames contd</h2>
 					<pre><code>
-@Data // Lombok
-class Transaction {
-  private double value;
-  private String customer;
-}
+						public interface Person extends VertexFrame {
+						@Property("name")
+						public String getName();
+
+						@Adjacency(label="knows")
+						public Iterable&lt;Person&gt; getKnowsPeople();
+
+						@Adjacency(label="knows")
+						public void addKnowsPerson(final Person person);
+
+						@GremlinGroovy("it.out('knows').out('knows').dedup")
+						public Iterable&lt;Person&gt; getFriendsOfAFriend()
+						}
 					</code></pre>
-					
-					<p>
-					Cheatsheet:
-					<pre>
-@Getter / @Setter
-Never write public int getFoo() {return foo;} again.
-
-@Data
-All together now: A shortcut for @ToString, @EqualsAndHashCode, 
-@Getter on all fields, and @Setter on all non-final fields,
-and @RequiredArgsConstructor!
-					</pre>
-					</p>
 				</section>
-				
+
 				<section>
-					<h2>Think in classic Java</h2>					
-					<pre class="fragment"><code>
-Collections.sort(transactions, new Comparator() {
-        public int compare(Transaction t1, Transaction t2) {
-            double v1 = t1.getValue();
-            double v2 = t2.getValue();
-            int vComp = v1.compareTo(v2);
-
-            if (vComp != 0) {
-               return vComp;
-            } else {
-               String c1 = t1.getCustomer();
-               String c2 = t2.getCustomer();
-               return c1.compareTo(c2);
-            }
-});
-					</pre></code>
-				</section>
-				
-				<section>
-				  <section>
-					  <h2>Lambda solution</h2>
-					  <p class="fragment">
-					  Let's start with length
-					  <pre class="fragment"><code>
-transactions.sort(comparing(Transaction::getValue));
-					  </code></pre>
-					  </p>
-					  
-					  <p class="fragment">
-					  Now let's reverse order:
-					  <pre class="fragment"><code>
-transactions.sort(comparing(Transaction::getValue)
-  .reversed()
-);
-					  </code></pre>
-					  </p>
-					  
-					  <p class="fragment">
-					  Now let's add secondary ordering alphabetical order
-					  <pre class="fragment"><code>
-transactions.sort(comparing(Transaction::getValue)
-  .reversed()
-  .thenComparing(Transaction::getCustomer)
-);
-					  </code></pre>
-					  </p>
-				</section>
-
-				  <section>
-						  <h2>BTW there was an error</h2>
-
-						  <pre class="fragment"><code>
-Collections.sort(transactions, new Comparator() {
-        public int compare(Transaction t1, Transaction t2) {
-            double v1 = t1.getValue();
-            double v2 = t2.getValue();
-            int vComp = v1.compareTo(v2);	// wrong order of comparison
-
-            if (vComp != 0) {
-               return vComp;
-            } else {
-               String c1 = t1.getCustomer();
-               String c2 = t2.getCustomer();
-               return c2.compareTo(c1);		// wrong order				 of comparison
-            }
-});
-						  </code></pre>
-				  </section>
-				</section>
-				
-				<section>
-					<h2>void compatibility rule</h2>
-					<p>
+					<h2>Frames contd</h2>
 					<pre><code>
-// Predicate has a boolean return
-Predicate&lt;String&gt; p = s -&gt; list.add(s);
-// Consumer has a void return
-Consumer&lt;String&gt; b = s -&gt; list.add(s);
+						FramedGraph manager = new FramedGraphFactory().create(graph);
+
+						Person marko = manager.frame(graph.getVertex(1), Person.class);
+						marko.setAge(31)
+						assert marko.getName().equals("marko")
+						for(Person person : marko.getKnowsPeople()) {
+						System.out.println(person.getName());
+						}
 					</code></pre>
-					</p>
 				</section>
 
 				<section>
-					<h1>THE END</h1>
-					<h3>by Pawel Dolega</h3>
+					<h2>Frames contd</h2>
+					<pre><code>
+
+					</code></pre>
 				</section>
 
+				<section>
+					<h2>Frames contd</h2>
+
+					<pre><code>
+						public interface Person {
+						@Property("name")
+						public String getName();
+
+						@Adjacency(label="knows")
+						public Iterable&lt;Person&gt; getKnowsPeople();
+
+						@Adjacency(label="knows")
+						public void addKnowsPerson(final Person person);
+
+						@GremlinGroovy("it.out('knows').out('knows').dedup")
+						public Iterable&lt;Person&gt; getFriendsOfAFriend()
+						}
+					</code></pre>
+				</section>
 			</div>
 
 		</div>
