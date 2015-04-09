@@ -1,9 +1,2 @@
-language: scala
-scala:
-    - "2.10.6"
-
 jdk:
-    - oraclejdk8
-
-script:
-    - ./gradlew -iS assemble check
+    - oraclejdk7
