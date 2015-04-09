@@ -61,15 +61,25 @@
 
 					<p>
 					A graph is a data structure composed of <b>vertices</b> (nodes, dots) and <b>edges</b> (arcs, lines).
-					When modeling a graph in a computer and applying it to modern data sets and practices, the generic mathematically-oriented, binary graph is extended to support both <b>labels</b> and <b>key/value properties</b>.
-					This structure is known as a <b>property graph</b>. More formally, it is a directed, binary, attributed multi-graph.
+					When modeling a graph in a computer and applying it to modern data sets and practices, the generic mathematically-oriented, graph is extended to support both <b>labels</b> and <b>key/value properties</b>.
+					This structure is known as a <b>property graph</b>. More formally, it is a directed, attributed multi-relational graph.
 					</p>
+				</section>
+
+				<section>
+					<h2>Which basically means...</h2>
+
+					<ul>
+						<li>directed - edges in graph have directionality (they point from one vertex to another)</li><br/>
+						<li>attributed - both vertices &amp; edges can have key/value properties associated with them</li><br/>
+						<li>multi-relational - there are many type of edges and thus many types of relationships</li><br/>
+					</ul>
 				</section>
 
 				<section>
 					<h2>What is graph database model composed of?</h2>
 					<ul>
-						<li>Vertecies</li>
+						<li>Vertices</li>
 						<li>Edges</li>
 						<li>Properties</li>
 					</ul>
@@ -90,12 +100,18 @@
 				<section>
 					<h2>Edge</h2>
 
-					Edge forms <b>direct</b> relationship between vertices. It's basically the <i>thing</i> that allows all the magic to happen.<br/>
+					Edge forms <b>direct</b> relationship between vertices. It's basically the <i>thing</i> that allows all the magic to happen *<br/>
 					It has direction and can have properties.
 
-					Edge is always seen from one vertex as outgoing (tail) whilst on the other vertex as incoming (head).
+					Edge is always seen on one vertex as outgoing (tail) whilst on the other vertex as incoming (head).<br/>
 
 					In short: Relationship
+
+					<br/><br/>
+
+					<p class="fragment">
+						* More on this crucial feature later
+					</p>
 
 					<aside class="notes">
 						In fact edge may be stored in the database in the same way as vertices. It depends on the implementation and whether you use
@@ -119,7 +135,7 @@
 				</section>
 
 				<section>
-					<h2>Structure of a vertex</h2>
+					<h2>Structure of a vertex (OrientDb)</h2>
 					<pre><code>
 						{
 						  ...
@@ -149,13 +165,13 @@
 					<h2>How to you interact with graph database ?</h2>
 
 					<ul>
-						<li>Custom API (e.g. Cypher)</li>
-						<li>Tinkerpop</li>
+						<li style="text-decoration: line-through;">Custom vendor API (e.g. Cypher)</li>
+						<li style="text-decoration: line-through;">Custom 3rd party API (e.g. spring-data-neo4j, spring-data-orientdb)</li>
+						<li>Tinkerpop stack</li>
 					</ul>
 				</section>
 
-				<section data-background="img/tinkerpop-splash.png" data-background-size="16em">
-					<h2>Here comes Tinkerpop</h2>
+				<section data-background="img/tinkerpop-splash.png" data-background-size="50%">
 				</section>
 
 				<section>
@@ -163,21 +179,44 @@
 
 					<ul>
 						<li><b>Blueprints</b> - collection of interfaces / implementations for the property graph data model. In short: JDBC, but for graph databases.</li><br/>
+
 						<li><b>Pipes</b> - lazy, data flow framework</li>
-						<li><b>Gremlin</b> - graph traversal language</li>
+						<li><b>Gremlin</b> - graph traversal language</li><br/>
+
 						<li>Frames - object-to-graph mapper</li>
 						<li>Furnace - graph algorithms package</li>
-						<li><b>Rexster - graph server</b></li>
+						<li>Rexster - graph server - exposing both REST API &amp; Gremlin console (Dog House)</li>
 					</ul>
 
 					<aside class="notes">
-						Examples of Furnace algorithms
+						Examples of Furnace algorithms ?
 					</aside>
 				</section>
 
-				<section data-background="img/rexster-system-arch.png" data-background-size="16em">
+				<section data-background="img/rexster-system-arch.png" data-background-size="35%">
 
+				</section>
 
+				<section>
+					<h2>Code samples - vanilla blueprints</h2>
+				</section>
+
+				<section>
+					<h2>What is graph database - closer look</h2>
+				</section>
+
+				<section data-background="img/vertex_bag.png" data-background-size="100%">
+					<aside class="notes">
+						Heterogenic bags of vertices - no-schema. How to make it all tidy ?
+					</aside>
+				</section>
+
+				<section>
+					<h2>Blueprints from scala perspective</h2>
+
+					<p>
+						<a href="https://github.com/anvie/blueprints-scala">blueprints-scala</a>
+					</p>
 				</section>
 
 				<section>

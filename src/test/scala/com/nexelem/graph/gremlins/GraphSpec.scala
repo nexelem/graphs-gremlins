@@ -6,7 +6,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 
 @RunWith(classOf[JUnitRunner])
-class GraphSpec extends WordSpecLike with Matchers with BeforeAndAfter {
+abstract class GraphSpec extends WordSpecLike with Matchers with BeforeAndAfter {
 
   val connector = new BlueprintsDbConnector
   implicit var graph: OrientBaseGraph = null

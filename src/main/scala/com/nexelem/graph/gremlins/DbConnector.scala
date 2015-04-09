@@ -28,7 +28,7 @@ class BlueprintsDbConnector {
   }
 
   def getLinked[T <: BaseEntity : ClassTag, E <: BaseEntity : ClassTag](entity: T, otherClass: Class[E], direction: Direction, labels: String*)(implicit graph: Graph): Iterable[E] = {
-    val vertex = graph.getVertex(entity.getId)
+    val vertex = entity.getVertex
     val vertices = vertex.getVertices(direction, labels.toArray : _*)
     vertices.asScala.map { v => toCC[E](v) }
   }
