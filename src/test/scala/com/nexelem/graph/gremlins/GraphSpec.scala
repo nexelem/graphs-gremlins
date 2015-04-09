@@ -8,15 +8,17 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 @RunWith(classOf[JUnitRunner])
 class GraphSpec extends WordSpecLike with Matchers with BeforeAndAfter {
 
-  implicit var graph: OrientBaseGraph = null
   val connector = new BlueprintsDbConnector
+  implicit var graph: OrientBaseGraph = null
 
   before {
-    graph = new OrientGraphFactory("memory:test-db", "admin", "admin").getNoTx
+    val factory = new OrientGraphFactory("memory:test-db", "admin", "admin")
+    graph = factory.getNoTx
     setup
   }
 
   after {
+    graph.drop()
     graph.shutdown()
   }
 
