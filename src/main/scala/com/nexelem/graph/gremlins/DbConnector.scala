@@ -36,4 +36,10 @@ class BlueprintsDbConnector {
 
 object BlueprintsDbConnector {
   def toCC[T <: BaseEntity : ClassTag](vertex: Vertex) = vertex.toCC[T].get
+
+  implicit def convertToCC(vertex: Vertex) = new CCVertex
+
+  class CCVertex {
+    def cc[T <: BaseEntity : ClassTag](vertex: Vertex) = toCC(vertex)
+  }
 }

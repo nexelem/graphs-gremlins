@@ -20,11 +20,15 @@ repositories {
 dependencies {
     compile 'org.scala-lang:scala-compiler:2.11.6'
     compile 'org.scala-lang:scala-library:2.11.6'
+    compile 'org.scalaz:scalaz-core_2.11:7.1.1'
 
     compile 'com.ansvia.graph:blueprints-scala_2.11:0.1.60-20150226-SNAPSHOT'
     compile 'com.orientechnologies:orientdb-graphdb:2.0.6'
+    compile 'com.tinkerpop:furnace:0.1-SNAPSHOT'
     compile 'com.jsuereth:scala-arm_2.11:1.4'
-    compile "com.michaelpollmeier:gremlin-scala_2.11:2.6.1"
+    compile 'com.michaelpollmeier:gremlin-scala_2.11:2.6.1'
+
+    compile 'org.apache.commons:commons-lang3:3.4'
 
     testCompile 'org.scalatest:scalatest_2.11:2.2.4'
     testCompile 'junit:junit:4.11'
