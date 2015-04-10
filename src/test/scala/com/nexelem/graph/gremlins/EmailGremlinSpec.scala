@@ -39,7 +39,7 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
   "Gremlins queries" should {
 
     "sanity check" in {
-      graph.countVertices() shouldBe 1150
+      graph.countVertices() shouldBe 1\\150 + 1
       graph.countEdges() should be > 400L
     }
 
@@ -64,6 +64,22 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
         .map { case v: Vertex => v }
 
       ccEmails.asJava.printDump("CC'ed emails:", "subject")
+    }
+
+    "find all emails from bankers to government officials with 2nd degree familiarity" in {
+
+    }
+
+    "all enterpreneurs who can access CEO withing less than 3 degrees of distance" in {
+
+    }
+
+    "5 people who have the biggest number of government officials or bankers in 1st or 2nd degree" in {
+
+    }
+
+    "find shortest path for two given people" in {
+
     }
 
 //    "finds person that sent the biggest amount of e-mails" in {

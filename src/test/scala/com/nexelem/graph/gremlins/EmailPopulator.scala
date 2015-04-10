@@ -11,20 +11,23 @@ import scala.io.Source
 
 object EmailPopulator {
   def populateDb(connector: BlueprintsDbConnector)(implicit graph: OrientBaseGraph): List[Vertex] = {
-    val people = populatePeople(connector)
+    val root = Root("graph root node").save
+    val people = populatePeople(connector, root)
     val emails = populateEmails(connector, people)
 
     people
   }
 
-  def populatePeople(connector: BlueprintsDbConnector)(implicit graph: OrientBaseGraph) = {
+  def populatePeople(connector: BlueprintsDbConnector, root: Vertex)(implicit graph: OrientBaseGraph) = {
     val generateName = createRandomNamesGenerator
     val generateOccupation = createRandomOccupationGenerator
 
     val people = Stream.continually {
       val name = generateName()
       val occupation = generateOccupation()
-      Person(name.name, name.lastName, occupation).save
+      val person = Person(name.name, name.lastName, occupation).save
+      root <-- "child" <-- person
+      person
     }.take(150).toList
 
     val commGenerator = new CommunityGenerator("knows")
@@ -96,3 +99,4 @@ case class Name(name: String, lastName: String)
 
 case class Email(subject: String, body: String) extends BaseEntity
 case class Person(name: String, lastName: String, occupation: String) extends BaseEntity
+case class Root(name: String) extends BaseEntity

@@ -167,7 +167,8 @@
 					<ul>
 						<li style="text-decoration: line-through;">Custom vendor API (e.g. Cypher)</li>
 						<li style="text-decoration: line-through;">Custom 3rd party API (e.g. spring-data-neo4j, spring-data-orientdb)</li>
-						<li>Tinkerpop stack</li>
+						<li style="text-decoration: line-through;">Frames</li>
+						<li>Blueprints / Gremlin</li>
 					</ul>
 				</section>
 
@@ -220,13 +221,71 @@
 				</section>
 
 				<section>
+					<h2><u>Index-free adjacency</u></h2>
+				</section>
+
+				<section data-background="img/relational_db_simple.png" data-background-size="100%">
+
+				</section>
+
+				<section data-background="img/relational_db_simple-key.png" data-background-size="100%">
+
+				</section>
+
+				<section data-background="img/relational_db_advanced.png" data-background-size="75%">
+
+				</section>
+
+				<section>
+					<h2>JOINs explosion !</h2>
+
+					<p>
+						Then comes denormalization and stuff to make your model more edible.
+					</p>
+				</section>
+
+				<section>
+					<h2>Whereas..</h2>
+
+					<p>
+						GraphDB handles relationships as a physical LINK to the record assigned when the edge.
+					</p>
+
+					<p>
+						This means jumping from a O(log N) algorithm to a near O(1). <b>Traversing cost is not more affected by database size!</b>
+					</p>
+				</section>
+
+				<section>
+					<p>
+						In GraphDb traversal (JOINs) is high-performance operation.
+					</p>
+				</section>
+
+				<section>
+					<h2>Root vertices</h2>
+
+					<p>Start traversal as soon as possible</p>
+				</section>
+
+				<section data-background="img/Typical-orb-web-photo.jpg" data-background-size="100%"></section>
+
+				<section>
+					<h2>Gremlin</h2>
+
+					<p>
+						<a href="https://github.com/mpollmeier/gremlin-scala">gremlin-scala</a>
+					</p>
+				</section>
+
+				<section>
 					<h2>More....</h2>
 					<ul>
 						<li>Schema-full vs schema-less vs schema-mixed models</li>
 						<li>Clustering</li>
 						<li>Extended SQL syntax</li>
-						<li></li>
-						<li></li>
+						<li>Indices</li>
+						<li>OrientDB specifics (which is quite a big subject on its own)</li>
 					</ul>
 				</section>
 
@@ -277,13 +336,6 @@
 						for(Person person : marko.getKnowsPeople()) {
 						System.out.println(person.getName());
 						}
-					</code></pre>
-				</section>
-
-				<section>
-					<h2>Frames contd</h2>
-					<pre><code>
-
 					</code></pre>
 				</section>
 
