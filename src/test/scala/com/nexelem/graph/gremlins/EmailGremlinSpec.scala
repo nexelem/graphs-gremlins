@@ -1,15 +1,15 @@
 package com.nexelem.graph.gremlins
 
+import com.ansvia.graph.BlueprintsWrapper._
+import com.nexelem.graph.gremlins.BlueprintsDbConnector._
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory
-import com.tinkerpop.gremlin.scala.ScalaGraph
+import com.tinkerpop.gremlin.scala.{ScalaGraph, _}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+
 import scala.collection.JavaConverters._
-import BlueprintsDbConnector._
-import com.ansvia.graph.BlueprintsWrapper._
-import com.tinkerpop.gremlin.scala._
 
 @RunWith(classOf[JUnitRunner])
 class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAll {
@@ -39,7 +39,7 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
   "Gremlins queries" should {
 
     "sanity check" in {
-      graph.countVertices() shouldBe 1\\150 + 1
+      graph.countVertices() shouldBe 1150 + 1
       graph.countEdges() should be > 400L
     }
 
@@ -55,7 +55,7 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
         .map { toCC[Person] }
         .getOrElse { throw new IllegalStateException("Duh... No person fulfilling given criteria in db") }
 
-      val ccEmails: Iterable[Vertex] = scalaGraph
+      val ccEmails = scalaGraph
         .v(dev.getId)
         .out("sent").as("email")
         .outE("cc")
@@ -66,12 +66,28 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
       ccEmails.asJava.printDump("CC'ed emails:", "subject")
     }
 
-    "find all emails from bankers to government officials with 2nd degree familiarity" in {
+    "all bankers who can access government officials within `knows` distance < 3" in {
+      val scalaGraph: ScalaGraph = graph
 
-    }
+      val root = scalaGraph
+        .V
+        .has("_class_", classOf[Root].getName)
+        .toList()
+        .map { toCC[Root] }
+        .head
 
-    "all enterpreneurs who can access CEO withing less than 3 degrees of distance" in {
+      val bankers = scalaGraph
+        .v(root.getId)
+        .in("child")
+        .has("occupation", "banker").as("person")
+        .out("knows")
+        .loop("person", _.getLoops < 3, _.getObject.get("occupation") == Some("official"))
+        .back("person")
+        .toList()
+        .map { case v: Vertex => v }
 
+      bankers.asJava.printDump("Found bankers", "names")
+      println(s"In total: ${bankers.size} records")
     }
 
     "5 people who have the biggest number of government officials or bankers in 1st or 2nd degree" in {
@@ -79,7 +95,29 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
     }
 
     "find shortest path for two given people" in {
+      val scalaGraph: ScalaGraph = graph
 
+      val people = scalaGraph
+        .V
+        .has("_class_", classOf[Person].getName)
+        .toList()
+
+      val firstPerson = people(0)
+      val secondPerson = people(35)
+
+      println(s"First person: ${firstPerson}, second person: ${secondPerson}")
+
+      val knowPath = scalaGraph
+        .v(firstPerson.getId)
+        .startPipe.as("person")
+        .out("knows")
+        .loop( "person", l => l.getObject.getId != secondPerson.getId && l.getLoops < 5 )
+        .path
+        .toStream()
+
+      knowPath.take(1).foreach { path =>
+        println(path)
+      }
     }
 
 //    "finds person that sent the biggest amount of e-mails" in {
