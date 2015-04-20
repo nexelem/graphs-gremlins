@@ -2,6 +2,7 @@ package com.nexelem.graph.gremlins
 
 import com.ansvia.graph.BlueprintsWrapper._
 import com.nexelem.graph.gremlins.BlueprintsDbConnector._
+import com.orientechnologies.orient.graph.gremlin.{OCommandGremlin, OGremlinHelper}
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory
 import com.tinkerpop.gremlin.scala.{ScalaGraph, _}
@@ -28,9 +29,9 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
     } else {
       println("Db already populated")
     }
+
+    OGremlinHelper.global().create()
   }
-
-
 
   override def afterAll() {
     graph.shutdown()
@@ -94,7 +95,7 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
 
     }
 
-    "find shortest path for two given people" in {
+    "find paths for two given people" in {
       val scalaGraph: ScalaGraph = graph
 
       val people = scalaGraph
@@ -120,18 +121,39 @@ class EmailGremlinSpec  extends WordSpecLike with Matchers with BeforeAndAfterAl
       }
     }
 
-//    "finds person that sent the biggest amount of e-mails" in {
-//      val scalaGraph: ScalaGraph = graph
-//
-//      val abstractGods = scalaGraph.V
-//        .has("_class_", classOf[Person].getName)
-//        .outE("sent")
-//        .as()
-//        .toList()
-//        .map {
-//        toCC[God]
-//      }
-//    }
+    "find shortest with real query" in {
+      val scalaGraph: ScalaGraph = graph
+
+      val people = scalaGraph
+        .V
+        .has("_class_", classOf[Person].getName)
+        .toList()
+
+      val firstPersonId = people(0).getId
+      val secondPersonId = people(35).getId
+
+      println(s"First person: ${firstPersonId}, second person: ${secondPersonId}")
+
+      val person: Vertex = graph.getVertex(new OCommandGremlin(s"g.v('${firstPersonId}')")
+                          .execute())
+
+      println(s"Found person: ${person}}")
+
+      val vals: java.util.List[Object] = new OCommandGremlin(
+        s"g.v(firstPersonId)" +
+        ".as('person')" +
+        ".out('knows')" +
+        s".loop('person'){ it.loops < 5  && it.object.id.toString() != secondPersonId }" +
+        ".path" +
+        ".filter { it.last().id.toString() == secondPersonId }"
+      )
+      .execute(
+        Map(
+          "firstPersonId" -> firstPersonId,
+          "secondPersonId" -> secondPersonId
+        ).asJava
+      )
+    }
   }
 
   private def dropDatabase {

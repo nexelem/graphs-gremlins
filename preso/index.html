@@ -52,6 +52,43 @@
 					</p>
 				</section>
 
+				<section data-background="img/nexelem-logo.png" data-background-size="25%" data-background-color="white">
+					<aside class="notes">
+						What we did ?
+					</aside>
+				</section>
+
+				<section>
+					<h2>Why ?</h2>
+
+					<aside class="notes">
+						Densly connected data vs reporting
+						Clustering
+
+						"if all you have is a hammer, everything looks like a nail"
+
+						No SQL hype ?
+					</aside>
+				</section>
+
+				<section>
+					<h2>What it's all about ?</h2>
+
+					<ul>
+						<li>Graph DBs 101</li>
+						<li>Libraries</li>
+						<li>Code samples</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Goal</h2>
+
+					<aside class="notes">
+						Be able to start easily
+					</aside>
+				</section>
+
 				<section data-background="img/title.png" data-background-size="36em">
 
 				</section>
@@ -341,27 +378,7 @@
 						marko.setAge(31)
 						assert marko.getName().equals("marko")
 						for(Person person : marko.getKnowsPeople()) {
-						System.out.println(person.getName());
-						}
-					</code></pre>
-				</section>
-
-				<section>
-					<h2>Frames contd</h2>
-
-					<pre><code>
-						public interface Person {
-						@Property("name")
-						public String getName();
-
-						@Adjacency(label="knows")
-						public Iterable&lt;Person&gt; getKnowsPeople();
-
-						@Adjacency(label="knows")
-						public void addKnowsPerson(final Person person);
-
-						@GremlinGroovy("it.out('knows').out('knows').dedup")
-						public Iterable&lt;Person&gt; getFriendsOfAFriend()
+						  System.out.println(person.getName());
 						}
 					</code></pre>
 				</section>
